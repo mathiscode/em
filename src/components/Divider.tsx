@@ -18,6 +18,7 @@ const Divider = ({ path }: { path: Path }) => {
   const dividerRef = React.createRef<HTMLInputElement>()
   const dispatch = useDispatch()
   const [width, setWidth] = useState(DIVIDER_MIN_WIDTH)
+  const [calls, setCalls] = useState(0)
 
   /** Sets the cursor to the divider. */
   const setCursorToDivider = (e: React.MouseEvent | React.TouchEvent) => {
@@ -28,6 +29,7 @@ const Divider = ({ path }: { path: Path }) => {
   /** Get the max width of nearby elements, add DIVIDER_PLUS_PX and set this width for divider. */
   const setStyle = () => {
     if (dividerRef.current) {
+      setCalls(c => c + 1)
       const state = store.getState()
       const parentPath = rootedParentOf(state, path)
 
@@ -63,7 +65,8 @@ const Divider = ({ path }: { path: Path }) => {
     }
   }
 
-  useEffect(setStyle, []) // eslint-disable-line react-hooks/exhaustive-deps
+  // useEffect(setStyle, []) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(setStyle, [dividerRef, path])
   editingValueStore.useEffect(setStyle)
 
   return (
@@ -80,6 +83,7 @@ const Divider = ({ path }: { path: Path }) => {
       className='divider-container z-index-stack'
       {...fastClick(setCursorToDivider)}
     >
+      <pre>{calls}</pre>
       <div
         className={classNames({
           divider: true,
